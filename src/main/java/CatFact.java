@@ -20,7 +20,8 @@ public class CatFact {
         this.upvotes = upvotes;
     }
 
-    public CatFact() {}
+    public CatFact() {
+    }
 
     public String getId() {
         return id;
@@ -45,11 +46,11 @@ public class CatFact {
     @Override
     public String toString() {
         return "CatFact{" +
-                "id='" + id + '\'' +
-                ", text='" + text + '\'' +
-                ", type='" + type + '\'' +
-                ", user='" + user + '\'' +
-                ", upvotes=" + upvotes +
-                '}';
+                "\n  id='" + id + '\'' +
+                ",\n  text='" + text + '\'' +
+                ",\n  type='" + type + '\'' +
+                ",\n  user='" + user + '\'' +
+                ",\n  upvotes=" + upvotes +
+                "\n}";
     }
 }

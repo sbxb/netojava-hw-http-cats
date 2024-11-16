@@ -9,8 +9,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 
 public class Main {
@@ -25,29 +23,22 @@ public class Main {
                 .setRedirectsEnabled(false)
                 .build();
 
-        CloseableHttpClient httpClient = HttpClientBuilder.create()
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create()
                 .setUserAgent("curl/7.81.0")
                 .setDefaultRequestConfig(config)
-                .build();
+                .build()) {
 
-        HttpGet request = new HttpGet(API_URL);
-        request.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-
-        try {
-            CloseableHttpResponse response = httpClient.execute(request);
-            //Arrays.stream(request.getAllHeaders()).forEach(System.out::println);
-            //System.out.println("");
-            //Arrays.stream(response.getAllHeaders()).forEach(System.out::println);
-            //System.out.println("");
-//            String body = new String(response.getEntity().getContent().readAllBytes(), StandardCharsets.UTF_8);
-//            System.out.println(body);
-            List<CatFact> facts = mapper.readValue(response.getEntity().getContent(),
-                    new TypeReference<List<CatFact>>(){});
-            facts.stream().filter(value -> value.getUpvotes() != null && value.getUpvotes() > 0)
-                    .forEach(System.out::println);
-
+            HttpGet request = new HttpGet(API_URL);
+            request.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                List<CatFact> facts = mapper.readValue(response.getEntity().getContent(),
+                        new TypeReference<List<CatFact>>() {
+                        });
+                facts.stream().filter(value -> value.getUpvotes() != null && value.getUpvotes() > 0)
+                        .forEach(System.out::println);
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("ERROR cannot parse info from remote server: " + e.getMessage());
         }
     }
 }
